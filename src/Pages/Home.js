@@ -1,5 +1,7 @@
 import React from "react";
+import Icon from "../assets/rosa.jpg"
 import { StatusBar } from "expo-status-bar";
+import {useNavigation} from "@react-navigation/native"
 import {
   StyleSheet,
   Text,
@@ -10,9 +12,11 @@ import {
   Platform,
 } from "react-native";
 
-const icon = require("./assets/rosa.jpg");
 
-export default function App() {
+export default function Home() {
+
+  const navegation = useNavigation();
+
   const handleButtonPress = () => {
     console.log("Botón presionado");
   };
@@ -22,7 +26,7 @@ export default function App() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <Image source={icon} style={styles.backgroundImage} />
+      <Image source={Icon} style={styles.backgroundImage}  />
 
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Sweeten</Text>
@@ -30,7 +34,7 @@ export default function App() {
       </View>
 
       <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
+        <TouchableOpacity style={styles.button} onPress={ () => navegation.navigate('ListRecet') } >
           <Text style={styles.buttonText}>Get in now</Text>
         </TouchableOpacity>
       </View>
