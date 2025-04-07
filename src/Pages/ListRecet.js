@@ -31,7 +31,21 @@ export default function ListRecet() {
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Recetas</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.headerTitle}>Recetas</Text>
+          <TouchableOpacity 
+            style={[
+              styles.viewSelectedButton,
+              selectedIngredients.length === 0 && styles.disabledButton
+            ]}
+            onPress={handleViewSelected}
+            disabled={selectedIngredients.length === 0}
+          >
+            <Text style={styles.viewSelectedButtonText}>
+              Seleccionados ({selectedIngredients.length})
+            </Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.headerSubtitle}>Explora nuestra colección</Text>
       </View>
 
@@ -84,6 +98,39 @@ export default function ListRecet() {
           )}
         </View>
       </ScrollView>
+
+      {/* Modal para ver ingredientes seleccionados */}
+      <Modal
+        visible={showSelectedModal}
+        animationType="slide"
+        transparent={false}
+        onRequestClose={handleCloseModal}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Ingredientes Seleccionados</Text>
+          
+          <ScrollView style={styles.modalScroll}>
+            {selectedIngredients.length > 0 ? (
+              selectedIngredients.map((ingredient, index) => (
+                <View key={index} style={styles.modalIngredientItem}>
+                  <Text style={styles.modalIngredientName}>
+                    • {ingredient}
+                  </Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.noSelectedText}>No hay ingredientes seleccionados</Text>
+            )}
+          </ScrollView>
+          
+          <TouchableOpacity 
+            style={styles.closeModalButton}
+            onPress={handleCloseModal}
+          >
+            <Text style={styles.closeModalButtonText}>Cerrar</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -102,6 +149,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#eeeeee',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 24,
