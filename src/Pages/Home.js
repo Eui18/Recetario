@@ -1,98 +1,126 @@
-import React from "react";
-import Icon from "../assets/rosa.jpg"
-import { StatusBar } from "expo-status-bar";
-import {useNavigation} from "@react-navigation/native"
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import React, { useState } from 'react';
+import { View, ImageBackground, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from '../assets/a.png';
+import { loginService } from '../services/auth/login';
 
 
-export default function Home() {
+const FormularioLogin = ({ navigation }) => {
+  const [usuario, setUsuario] = useState('');
+  const [contraseña, setContraseña] = useState('');
+  const [error, setError] = useState('');
 
-  const navegation = useNavigation();
-
-  const handleButtonPress = () => {
-    console.log("Botón presionado");
+  const handleSubmit = () => {
+    if (usuario.trim() === '' || contraseña.trim() === '') {
+      setError('Por favor completa todos los campos');
+    } else {
+      setError('');
+      navigation.navigate('ListRecet');
+    }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <Image source={Icon} style={styles.backgroundImage}  />
+    <ImageBackground source={Icon} style={styles.backgroundImage}>
+      <View style={styles.overlay}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Sign In</Text>
+          <Text style={styles.headerSubtitle}>Accede a miles de ideas para cocinar</Text>
+        </View>
 
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Sweeten</Text>
-        <Text style={styles.subtitle}>Sabores del mundo en tu cocina</Text>
+        <View style={styles.container}>
+          <Text style={styles.label}>Usuario</Text>
+          <TextInput
+            style={styles.input}
+            value={usuario}
+            onChangeText={setUsuario}
+            placeholder="Ingresa tu usuario"
+            placeholderTextColor="#851736"
+          />
+
+          <Text style={styles.label}>Contraseña</Text>
+          <TextInput
+            style={styles.input}
+            value={contraseña}
+            onChangeText={setContraseña}
+            placeholder="Ingresa tu contraseña"
+            placeholderTextColor="#851736"
+            secureTextEntry
+          />
+
+          {error !== '' && <Text style={styles.error}>{error}</Text>}
+
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ marginTop: 20, alignItems: 'center' }}>
+          <Text style={{ color: '#2c3e50' }}>¿No tienes una cuenta?{' '}
+          <Text style={{ color: '#851736', fontWeight: 'bold' }} 
+          onPress={() => navigation.navigate('FormularioRegistro')}>Regístrate</Text>
+          </Text>
+        </View>
       </View>
-
-      <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.button} onPress={ () => navegation.navigate('ListRecet') } >
-          <Text style={styles.buttonText}>Get in now</Text>
-        </TouchableOpacity>
-      </View>
-
-      <StatusBar style="auto" />
-    </KeyboardAvoidingView>
+    </ImageBackground>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   backgroundImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  titleContainer: {
-    position: "absolute",
-    top: "40%",
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 40,
-    fontWeight: "bold",
-    color: "#fff",
-    fontStyle: "italic",
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#fff",
-    fontStyle: "italic",
-    textAlign: "center",
-    marginTop: 10,
-  },
-  bottomContainer: {
     flex: 1,
-    backgroundColor: "#a11c55",
-    padding: 20,
-    justifyContent: "flex-end",
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
+  header: {
+    paddingHorizontal: 24,
+    paddingVertical: 32,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 38,
+    fontWeight: 'bold',
+    color: '#851736',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#7f8c8d',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  container: {
+    paddingHorizontal: 24,
+    paddingBottom: 120,
+  },
+  label: {
+    fontSize: 14,
+    marginBottom: 6,
+    color: '#34495e',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#dcdde1',
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+    color: '#2c3e50',
+  },
+  error: {
+    color: 'red',
+    marginBottom: 16,
+    textAlign: 'center',
   },
   button: {
-    width: "100%",
-    height: 40,
-    backgroundColor: "#762146",
+    backgroundColor: '#851736',
+    paddingVertical: 14,
     borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 300,
+    alignItems: 'center',
+    marginTop: 10,
   },
   buttonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#fff",
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
+
+export default FormularioLogin;

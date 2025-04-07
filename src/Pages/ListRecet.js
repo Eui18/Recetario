@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
   View, 
   Text, 
@@ -8,13 +8,23 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
-  Dimensions
+  Dimensions,
+  TextInput
 } from "react-native";
 import dataListRecet from "../mocks/ListRecets.json";
 import { useNavigation } from "@react-navigation/native";
 
 export default function ListRecet() {
   const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredRecetas = dataListRecet.filter((receta) =>
+    receta.nombre.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleCardPress = (receta) => {
+    navigation.navigate('Descriptions', { receta });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,40 +34,54 @@ export default function ListRecet() {
         <Text style={styles.headerTitle}>Recetas</Text>
         <Text style={styles.headerSubtitle}>Explora nuestra colección</Text>
       </View>
-      
+
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar receta..."
+          placeholderTextColor="#888"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.containerList}>
-          {dataListRecet.map((receta, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.containerCard}
-              activeOpacity={0.9}
-              onPress={() => navigation.navigate('Descriptions', { receta })}
-            >
-              <View style={styles.imageContainer}>
-                <Image 
-                  style={styles.image} 
-                  source={{ uri: receta.imagen }} 
-                  resizeMode="cover"
-                />
-                <View style={styles.categoryTag}>
-                  <Text style={styles.categoryText}>{receta.categoria}</Text>
+          {filteredRecetas.length > 0 ? (
+            filteredRecetas.map((receta, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.containerCard}
+                activeOpacity={0.9}
+                onPress={() => handleCardPress(receta)}
+              >
+                <View style={styles.imageContainer}>
+                  <Image 
+                    style={styles.image} 
+                    source={{ uri: receta.imagen }} 
+                    resizeMode="cover"
+                  />
+                  <View style={styles.categoryTag}>
+                    <Text style={styles.categoryText}>{receta.categoria}</Text>
+                  </View>
                 </View>
-              </View>
-              
-              <View style={styles.cardContent}>
-                <Text style={styles.textCard} numberOfLines={2}>{receta.nombre}</Text>
-                <View style={styles.infoRow}>
-                  <Text style={styles.timeInfo}>{receta.tiempoPreparacion}</Text>
-                  <Text style={styles.portionsInfo}>{receta.porciones}</Text>
+                
+                <View style={styles.cardContent}>
+                  <Text style={styles.textCard} numberOfLines={2}>{receta.nombre}</Text>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.timeInfo}>{receta.tiempoPreparacion}</Text>
+                    <Text style={styles.portionsInfo}>{receta.porciones}</Text>
+                  </View>
                 </View>
-              </View>
-              
-              <View style={styles.cardFooter}>
-                <Text style={styles.viewMoreText}>Ver detalles</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+                
+                <View style={styles.cardFooter}>
+                  <Text style={styles.viewMoreText}>Ver detalles</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.noResults}>No se encontraron recetas</Text>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -89,6 +113,21 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 4,
   },
+  searchContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#fff',
+  },
+  searchInput: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    fontSize: 14,
+    color: '#333',
+    backgroundColor: '#fff',
+  },
   scrollContent: {
     paddingBottom: 20,
   },
@@ -105,10 +144,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 3,
@@ -125,7 +161,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 8,
     left: 8,
-    backgroundColor: 'rgba(255, 100, 124, 0.9)',
+    backgroundColor: 'rgba(143, 0, 21, 0.9)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
@@ -159,14 +195,21 @@ const styles = StyleSheet.create({
     color: '#888',
   },
   cardFooter: {
+    backgroundColor: '#851736',
     borderTopWidth: 1,
     borderTopColor: '#f0f0f0',
     padding: 8,
     alignItems: 'center',
   },
   viewMoreText: {
-    color: '#FF647C',
+    color: 'white',
     fontSize: 12,
     fontWeight: '500',
-  }
+  },
+  noResults: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#888',
+    marginTop: 20,
+  },
 });
