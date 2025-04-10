@@ -9,7 +9,8 @@ import {
   SafeAreaView,
   StatusBar,
   Dimensions,
-  TextInput
+  TextInput,
+  Modal // ✅ Importado aquí
 } from "react-native";
 import dataListRecet from "../mocks/ListRecets.json";
 import { useNavigation } from "@react-navigation/native";
@@ -17,6 +18,8 @@ import { useNavigation } from "@react-navigation/native";
 export default function ListRecet() {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIngredients, setSelectedIngredients] = useState([]); // ✅ Definido
+  const [showSelectedModal, setShowSelectedModal] = useState(false); // ✅ Definido
 
   const filteredRecetas = dataListRecet.filter((receta) =>
     receta.nombre.toLowerCase().includes(searchQuery.toLowerCase())
@@ -24,6 +27,14 @@ export default function ListRecet() {
 
   const handleCardPress = (receta) => {
     navigation.navigate('Descriptions', { receta });
+  };
+
+  const handleViewSelected = () => {
+    setShowSelectedModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowSelectedModal(false);
   };
 
   return (
@@ -165,6 +176,20 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 4,
   },
+  viewSelectedButton: {
+    backgroundColor: '#851736',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  viewSelectedButtonText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
+  },
   searchContainer: {
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -263,5 +288,39 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888',
     marginTop: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#fff",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 16,
+  },
+  modalScroll: {
+    marginBottom: 20,
+  },
+  modalIngredientItem: {
+    paddingVertical: 6,
+  },
+  modalIngredientName: {
+    fontSize: 16,
+    color: "#333",
+  },
+  noSelectedText: {
+    fontSize: 16,
+    color: "#999",
+  },
+  closeModalButton: {
+    backgroundColor: "#851736",
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  closeModalButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });

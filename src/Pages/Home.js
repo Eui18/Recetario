@@ -2,19 +2,29 @@ import React, { useState } from 'react';
 import { View, ImageBackground, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from '../assets/a.png';
 import { loginService } from '../services/auth/login';
+import useField from '../hooks/useField';
 
 
 const FormularioLogin = ({ navigation }) => {
-  const [usuario, setUsuario] = useState('');
-  const [contraseña, setContraseña] = useState('');
-  const [error, setError] = useState('');
+ const correo = useField({type: 'email'});
+ const contraseña = useField({type: 'password'});
+ const [errorMessage, setErrorMessage]=useState('')
 
-  const handleSubmit = () => {
-    if (usuario.trim() === '' || contraseña.trim() === '') {
-      setError('Por favor completa todos los campos');
-    } else {
-      setError('');
-      navigation.navigate('ListRecet');
+
+  const handleSubmit = async () => {
+    try {
+      const data= await loginService({
+        correo: correo.value,
+        contraseña: contraseña.value
+      });
+
+      if (data.data.nombre){
+        navigation.navigate('ListRecet');
+      }else{
+        setErrorMessage('invalid credentials');
+      }
+    } catch (error) {
+      setErrorMessage('invalid credentials');
     }
   };
 
@@ -27,11 +37,11 @@ const FormularioLogin = ({ navigation }) => {
         </View>
 
         <View style={styles.container}>
-          <Text style={styles.label}>Usuario</Text>
+          <Text style={styles.label}>correo electronico</Text>
           <TextInput
             style={styles.input}
-            value={usuario}
-            onChangeText={setUsuario}
+            onChangeText={correo.onChangeText}
+            onBlur={correo.onBlur}
             placeholder="Ingresa tu usuario"
             placeholderTextColor="#851736"
           />
@@ -39,14 +49,14 @@ const FormularioLogin = ({ navigation }) => {
           <Text style={styles.label}>Contraseña</Text>
           <TextInput
             style={styles.input}
-            value={contraseña}
-            onChangeText={setContraseña}
+            onChangeText={contraseña.onChangeText}
+            onBlur={contraseña.onBlur}
             placeholder="Ingresa tu contraseña"
             placeholderTextColor="#851736"
             secureTextEntry
           />
 
-          {error !== '' && <Text style={styles.error}>{error}</Text>}
+          {errorMessage !== '' && <Text style={styles.error}>{errorMessage}</Text>}
 
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Login</Text>
